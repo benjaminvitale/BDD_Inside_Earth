@@ -3,20 +3,39 @@ import sqlalchemy
 from sqlalchemy import create_engine
 import urllib
 import random
+import pytds
 
 # ==========================================
 # 1. CONFIGURACIÓN (¡PON TUS DATOS AQUÍ!)
 # ==========================================
 SERVER = 'juan1.database.windows.net'  # Tu servidor
 DATABASE = 'free-sql-db-9389715'       # Tu base de datos
-USERNAME = 'tu_usuario_admin'          # El usuario que creaste
-PASSWORD = 'tu_password_fuerte'        # La contraseña
+USERNAME = 'benjaminvit'          # El usuario que creaste
+PASSWORD = 'Huevo12#'        # La contraseña
 DRIVER = '{ODBC Driver 17 for SQL Server}' # Usualmente este viene instalado por defecto
 
-# Cadena de conexión segura para Azure
+# Usamos 'mssql+pytds'
+connection_string = f"mssql+pytds://{USERNAME}:{PASSWORD}@{SERVER}/{DATABASE}"
+
+try:
+    # AQUÍ ESTÁ EL TRUCO: Le decimos a pytds que la encriptación es OBLIGATORIA
+    engine = create_engine(
+        connection_string, 
+        connect_args={'encryption_level': 1} 
+    )
+    
+    # Prueba rápida
+    with engine.connect() as conn:
+        print("--- CONEXIÓN EXITOSA ---")
+except Exception as e:
+    print(f"Error de conexión: {e}")
+    exit()
+
+"""# Cadena de conexión segura para Azure
 connection_string = f'DRIVER={DRIVER};SERVER={SERVER};PORT=1433;DATABASE={DATABASE};UID={USERNAME};PWD={PASSWORD}'
 params = urllib.parse.quote_plus(connection_string)
-engine = create_engine(f"mssql+pyodbc:///?odbc_connect={params}")
+engine = create_engine(f"mssql+pyodbc:///?odbc_connect={params}")"""
+
 
 # ==========================================
 # 2. GENERADOR DE DATOS SUCIOS (Simulamos el Excel)
